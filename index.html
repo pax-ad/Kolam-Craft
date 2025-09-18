@@ -1,0 +1,91 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Kolam Recreator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .image-container { 
+            display: flex; 
+            gap: 1.5rem; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            align-items: flex-start;
+            margin-top: 1rem;
+        }
+        .image-container div { 
+            text-align: center; 
+            max-width: 300px;
+        }
+        .results-section { 
+            width: 100%; 
+            max-width: 1200px; 
+        }
+        .phase-description {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Kolam CRAFT 🎨</h1>
+        <p>Upload a Kolam image to see its core principles detection  and a step-by-step recreation.</p>
+    </header>
+
+    <main>
+        <form class="upload-section" action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="kolam-image" id="kolam-upload" accept="image/*" required>
+            <button type="submit">Analyze</button>
+        </form>
+
+        {% if result %}
+        <div class="results-section">
+            <h2>Analysis & Recreation Pipeline</h2>
+            {% if result.error %}
+                <p class="error">Error analyzing image: {{ result.error }}</p>
+            {% else %}
+                <p>Core Principle Identified: <strong>{{ result.dot_count }} Point Lattice</strong></p>
+                
+                <div class="image-container">
+                    <div>
+                        <h3>Phase 1: Isolate Dots</h3>
+                        <img src="{{ url_for('static', filename='uploads/' + result.diag_filename) }}" alt="Isolated Dots View" width="300">
+                        <p class="phase-description">
+                            The AI applies morphological filters to the image, digitally removing the connecting lines to isolate the core structural elements of the Kolam: the dots.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Phase 2: Detect Dots</h3>
+                        <img src="{{ url_for('static', filename='uploads/' + result.debug_filename) }}" alt="Detected Dots View" width="300">
+                        <p class="phase-description">
+                            The model identifies the precise coordinates of each dot. A clustering algorithm ensures accuracy, and the final lattice is confirmed by highlighting the dots in green.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Phase 3: Recreate</h3>
+                        {% if result.recreation_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + result.recreation_filename) }}" alt="Kolam Recreation" width="300">
+                            <p class="phase-description">
+                                Using the identified lattice as a guide, the AI traces the original outline and generates a clean vector graphic (SVG), animating the path to mimic a human artist's stroke.
+                            </p>
+                        {% else %}
+                            <p class="phase-description" style="color: red; font-weight: bold;">
+                                Recreation failed because no dots were found.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
