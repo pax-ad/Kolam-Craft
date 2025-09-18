@@ -1,4 +1,4 @@
-AI Kolam Recreator 🎨
+Kolam craft🎨
 A web application that uses a rule-based computer vision model to deconstruct and recreate traditional South Indian Kolam art, based on the principles from the academic paper, "The Kolam Drawing: A Point Lattice System."
 
 This project was developed for a hackathon to explore the intersection of artificial intelligence and cultural heritage.
